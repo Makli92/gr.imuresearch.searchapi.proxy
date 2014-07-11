@@ -1,0 +1,8 @@
+.git*
+.idea
+LICENSE
+README
+activator.bat
+logs
+target
+test
