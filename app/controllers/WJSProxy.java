@@ -59,10 +59,10 @@ public class WJSProxy extends Controller {
                         Map<String,String> keyValue = new LinkedHashMap<String, String>();
                         Elements a = next.select(".newsImage").select("a");
                         keyValue.put("image", a.select("img").attr("src"));
-                        keyValue.put("title",next.select("h2 > a.mjLinkItem").html());
+                        keyValue.put("title",next.select("a.mjLinkItem").html());
                         keyValue.put("content",next.select("p").html());
                         keyValue.put("date",next.select(".metadataType-timeStamp").html());
-                        keyValue.put("url", a.attr("href"));
+                        keyValue.put("url", next.select("a.mjLinkItem").attr("href"));
 
                         ret.add(keyValue);
                     }
