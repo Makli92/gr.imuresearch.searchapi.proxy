@@ -13,3 +13,5 @@ GET        /wsj                 controllers.WJSProxy.index(q)
 
 GET        /hbr                 controllers.HBRProxy.index(q)
 
+GET        /ft                 controllers.FTProxy.index(q)
+
