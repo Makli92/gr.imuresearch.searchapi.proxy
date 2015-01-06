@@ -18,10 +18,9 @@ libraryDependencies ++= Seq(
   javaWs
 )
 
-
 libraryDependencies += "org.jsoup" % "jsoup" % "1.7.2"
 
 libraryDependencies += "commons-lang" % "commons-lang" % "2.6"
 
-
+libraryDependencies += "org.json" % "json" % "20080701"
 
