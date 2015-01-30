@@ -47,7 +47,7 @@ public class CNNProxy extends Controller {
         
         String feedUrl = "http://searchapp.cnn.com/search/query.jsp";
 
-        query = query  + "&type=all";
+        //query = query  + "&type=all";
         String page = "1";
         String npp = "10";
         String start = "1";
