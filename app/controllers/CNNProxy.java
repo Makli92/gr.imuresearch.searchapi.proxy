@@ -44,8 +44,22 @@ public class CNNProxy extends Controller {
 
             });
         }
+        
+        String feedUrl = "http://searchapp.cnn.com/search/query.jsp";
 
-        F.Promise<WSResponse> wsResponsePromise = WS.url("http://searchapp.cnn.com/search/query.jsp").setQueryParameter("query", query).get();
+        query = query  + "&type=all";
+        String page = "1";
+        String npp = "10";
+        String start = "1";
+        String type = "all";
+        String bucket = "true";
+        String sort = "relevance";
+        String csiID = "csi1";
+        
+        F.Promise<WSResponse> wsResponsePromise = WS.url(feedUrl).setQueryParameter("page", page).setQueryParameter("npp", npp)
+                                                                    .setQueryParameter("start", start).setQueryParameter("text", query)
+                                                                    .setQueryParameter("type", type).setQueryParameter("bucket", bucket)
+                                                                    .setQueryParameter("sort", sort).setQueryParameter("csiID", csiID).get();
 
         return wsResponsePromise.map(new F.Function<WSResponse, Result>() {
             @Override
