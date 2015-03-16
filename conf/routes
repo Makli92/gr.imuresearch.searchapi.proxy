@@ -15,3 +15,9 @@ GET        /hbr                 controllers.HBRProxy.index(q)
 
 GET        /ft                 controllers.FTProxy.index(q)
 
+GET        /bp                 controllers.BPProxy.index(q)
+
+GET        /an                 controllers.ANProxy.index(q)
+
+GET        /car                 controllers.CARProxy.index(q)
+
