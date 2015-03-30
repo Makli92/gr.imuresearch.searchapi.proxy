@@ -94,9 +94,9 @@ public class CNNProxy extends Controller {
                         
                         keyValue.put("image", image);
                         keyValue.put("title", title);
-                        keyValue.put("url", url);
                         keyValue.put("content", content);
                         keyValue.put("date", date);
+                        keyValue.put("url", url);
                         
                         ret.add(keyValue);
                     }

@@ -16,3 +16,5 @@ GET         /hbr                controllers.HBRProxy.index(q)
 GET         /ft                 controllers.FTProxy.index(q)
 
 GET         /cnn                controllers.CNNProxy.index(q)
+
+GET         /bb                 controllers.BBProxy.index(q)
