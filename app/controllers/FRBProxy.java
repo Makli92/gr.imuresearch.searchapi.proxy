@@ -25,7 +25,7 @@ import java.util.Map;
  * Created by kostandin on 29/03/15.
  */
  
-public class BBProxy extends Controller {
+public class FRBProxy extends Controller {
 
     public static F.Promise<Result> index(String query) {
 
@@ -40,7 +40,7 @@ public class BBProxy extends Controller {
             });
         }
 
-            F.Promise<WSResponse> wsResponsePromise = WS.url("http://www.bloomberg.com/search").setQueryParameter("query",query).get();
+        F.Promise<WSResponse> wsResponsePromise = WS.url("http://www.forbes.com/search/").setQueryParameter("q",query).get();
 
         return wsResponsePromise.map(new F.Function<WSResponse, Result>() {
             @Override
@@ -49,45 +49,37 @@ public class BBProxy extends Controller {
 
                 String body = wsResponse.getBody();
 
-                List<Map<String,String>> ret  = new ArrayList<Map<String, String>>();
+                List<Map<String,String>> results  = new ArrayList<Map<String, String>>();
 
                 try {
-                    // Insert into map
                     
+                    // Insert into map
                     org.jsoup.nodes.Document doc = Jsoup.parse(body);
-                    Elements items = doc.getElementsByClass("search-result");
+                    Elements items = doc.select("li.edittools-contentitem");        // All articles belong to this class
                     
                     for (Element item : items) {
                         Map<String,String> keyValue = new LinkedHashMap<String, String>();
                         
-                        keyValue.put("image", item.getElementsByClass("search-result-story__thumbnail__image").attr("src"));
-                        keyValue.put("title", item.getElementsByClass("search-result-story__headline").text());
-                        
-                        int index = item.getElementsByClass("search-result-story__body").text().indexOf(" (Source: Bloomberg");
-                        
-                        if ( index == -1) {
-                            keyValue.put("content", item.getElementsByClass("search-result-story__body").text());
-                        } else {
-                            keyValue.put("content", item.getElementsByClass("search-result-story__body").text().substring(0, index));
+                        // Check if specific article belongs to gallery class (therefore it contains an image)
+                        if (item.hasClass("gallery")) {
+                            // Add image key and value to map
+                            keyValue.put("image", item.select("img").attr("src"));
                         }
                         
-                        keyValue.put("date", item.getElementsByClass("published-at").text());
-                        keyValue.put("url", "www.bloomberg.com/" + item.getElementsByClass("search-result-story__thumbnail__link").attr("href"));
+                        // Add the rest of keys and values
+                        keyValue.put("title", item.select("h2").select("a").text());
+                        keyValue.put("content", item.select("p").first().ownText());
+                        keyValue.put("date", item.select("time").text());
+                        keyValue.put("url", item.select("h2").select("a").attr("href"));
                         
-                        ret.add(keyValue);
+                        results.add(keyValue);
                     }
-
-
                 } catch (DOMException e) {
                     e.printStackTrace();
                 }
 
-                return ok(Json.toJson(ret));
-
+                return ok(Json.toJson(results));
             }
         });
-
-
     }
-
 }
