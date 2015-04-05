@@ -22,10 +22,10 @@ import java.util.Map;
  * If no license is here then you can whatever you like!
  * and of course I am not liable
  *
- * Created by kostandin on 01/04/15.
+ * Created by kostandin on 05/04/15.
  */
  
-public class FRBProxy extends Controller {
+public class KWProxy extends Controller {
 
     public static F.Promise<Result> index(String query) {
 
@@ -40,7 +40,7 @@ public class FRBProxy extends Controller {
             });
         }
 
-        F.Promise<WSResponse> wsResponsePromise = WS.url("http://www.forbes.com/search/").setQueryParameter("q",query).get();
+        F.Promise<WSResponse> wsResponsePromise = WS.url("http://knowledge.wharton.upenn.edu/").setQueryParameter("s",query).get();
 
         return wsResponsePromise.map(new F.Function<WSResponse, Result>() {
             @Override
@@ -55,21 +55,28 @@ public class FRBProxy extends Controller {
                     
                     // Insert into map
                     org.jsoup.nodes.Document doc = Jsoup.parse(body);
-                    Elements items = doc.select("li.edittools-contentitem");        // All articles belong to this class
+                    Elements items = doc.select("div.article.type-article.status-publish");         // All articles belong to this classes
                     
                     for (Element item : items) {
                         Map<String,String> keyValue = new LinkedHashMap<String, String>();
                         
-                        // Check if specific article belongs to gallery class (therefore it contains an image)
-                        if (item.hasClass("gallery")) {
+                        // Check if specific article belongs to "has-post-thumbnail" class (therefore it contains an image)
+                        if (item.hasClass("has-post-thumbnail")) {
                             // Add image key and value to map
                             keyValue.put("image", item.select("img").attr("src"));
                         }
                         
                         // Add the rest of keys and values
+                        /*
                         keyValue.put("title", item.select("h2").select("a").text());
                         keyValue.put("content", item.select("p").first().ownText());
                         keyValue.put("date", item.select("time").text());
+                        keyValue.put("url", item.select("h2").select("a").attr("href"));
+                        */ 
+                        
+                        keyValue.put("title", item.select("h2").select("a").text());
+                        keyValue.put("content", item.select("div.attribute.categorythumbs").first().text());
+                        keyValue.put("date", item.select("ul.datestamp").select("li").first().text());
                         keyValue.put("url", item.select("h2").select("a").attr("href"));
                         
                         results.add(keyValue);
