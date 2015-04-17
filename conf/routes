@@ -22,3 +22,5 @@ GET         /bb                 controllers.BBProxy.index(q)
 GET         /frb                controllers.FRBProxy.index(q)
 
 GET         /kw                 controllers.KWProxy.index(q)
+
+GET         /nw                 controllers.NWProxy.index(q)

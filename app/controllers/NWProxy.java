@@ -1,5 +1,8 @@
 package controllers;
 
+import java.io.IOException;
+import java.lang.System;
+
 import org.apache.commons.lang.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Element;
@@ -22,10 +25,10 @@ import java.util.Map;
  * If no license is here then you can whatever you like!
  * and of course I am not liable
  *
- * Created by kostandin on 05/04/15.
+ * Created by kostandin on 16/04/15.
  */
  
-public class KWProxy extends Controller {
+public class NWProxy extends Controller {
 
     public static F.Promise<Result> index(String query) {
 
@@ -40,7 +43,9 @@ public class KWProxy extends Controller {
             });
         }
 
-        F.Promise<WSResponse> wsResponsePromise = WS.url("http://knowledge.wharton.upenn.edu/").setQueryParameter("s",query).get();
+        final String officialUrl = "http://www.newsweek.com";
+
+        F.Promise<WSResponse> wsResponsePromise = WS.url(officialUrl + "/search/site/" + query).get();
 
         return wsResponsePromise.map(new F.Function<WSResponse, Result>() {
             @Override
@@ -55,22 +60,21 @@ public class KWProxy extends Controller {
                     
                     // Insert into map
                     org.jsoup.nodes.Document doc = Jsoup.parse(body);
-                    Elements items = doc.select("div.article.type-article.status-publish");         // All articles belong to this classes
+                    Elements items = doc.select("li.search-result");            // All articles belong to this class
                     
                     for (Element item : items) {
                         Map<String,String> keyValue = new LinkedHashMap<String, String>();
                         
-                        // Check if specific article belongs to "has-post-thumbnail" class (therefore it contains an image)
-                        if (item.hasClass("has-post-thumbnail")) {
-                            // Add image key and value to map
-                            keyValue.put("image", item.select("img").attr("src"));
-                        }
-                        
-                        // Add the rest of keys and values
+                        keyValue.put("image", item.select("img").attr("src"));
                         keyValue.put("title", item.select("h2").select("a").text());
-                        keyValue.put("content", item.select("div.attribute.categorythumbs").first().text());
-                        keyValue.put("date", item.select("ul.datestamp").select("li").first().text());
-                        keyValue.put("url", item.select("h2").select("a").attr("href"));
+                        keyValue.put("content", item.select("div.article-summary").first().text());
+                        
+                        // Get date from each article separately
+                        org.jsoup.nodes.Document articleDoc = RedirectionHandler(officialUrl + item.select("a").attr("href"));
+                        Elements meta = articleDoc.select("html head meta");
+                        
+                        keyValue.put("date", articleDoc.select("span.timedate").text());
+                        keyValue.put("url", officialUrl + item.select("a").attr("href"));
                         
                         results.add(keyValue);
                     }
@@ -81,5 +85,21 @@ public class KWProxy extends Controller {
                 return ok(Json.toJson(results));
             }
         });
+    }
+    
+    private static org.jsoup.nodes.Document RedirectionHandler(String url) throws IOException {
+
+        org.jsoup.nodes.Document articleDoc = Jsoup.connect(url).get();
+        String officialUrl = "http://www.newsweek.com";
+        String redirectedUrl = null;
+        
+        Elements meta = articleDoc.select("html head meta");
+        
+        if (meta.attr("http-equiv").contains("refresh")) {
+            redirectedUrl = officialUrl + meta.attr("content").substring(meta.attr("content").indexOf("=") + 1).replaceAll("'", "");
+            return RedirectionHandler(redirectedUrl);
+        }
+    
+        return articleDoc;
     }
 }
