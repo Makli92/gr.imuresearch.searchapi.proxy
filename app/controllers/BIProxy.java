@@ -25,7 +25,7 @@ import java.util.Map;
  * Created by kostandin on 29/03/15.
  */
  
-public class BBProxy extends Controller {
+public class BIProxy extends Controller {
 
     public static F.Promise<Result> index(String query) {
 
@@ -40,46 +40,38 @@ public class BBProxy extends Controller {
             });
         }
 
-            F.Promise<WSResponse> wsResponsePromise = WS.url("http://www.bloomberg.com/search").setQueryParameter("query",query).get();
+        F.Promise<WSResponse> wsResponsePromise = WS.url("http://www.businessinsider.com/s").setQueryParameter("q",query).get();
 
         return wsResponsePromise.map(new F.Function<WSResponse, Result>() {
             @Override
             public Result apply(WSResponse wsResponse) throws Throwable {
 
                 String body = wsResponse.getBody();
-
-                List<Map<String,String>> ret  = new ArrayList<Map<String, String>>();
+                List<Map<String,String>> results  = new ArrayList<Map<String, String>>();
 
                 try {
                     // Insert into map
                     org.jsoup.nodes.Document doc = Jsoup.parse(body);
-                    Elements items = doc.getElementsByClass("search-result");
+                    Elements items = doc.select("div.search-result");
                     
+                    // Iterate through results
                     for (Element item : items) {
                         Map<String,String> keyValue = new LinkedHashMap<String, String>();
                         
-                        keyValue.put("image", item.getElementsByClass("search-result-story__thumbnail__image").attr("src"));
-                        keyValue.put("title", item.getElementsByClass("search-result-story__headline").text());
+                        keyValue.put("image", item.select("img").attr("src"));
+                        keyValue.put("title", item.select("h3").text());
+                        keyValue.put("content", item.select("div.excerpt").first().text());
+                        keyValue.put("date", item.select("li.date").text());
+                        keyValue.put("url", item.select("a").attr("href"));
                         
-                        int index = item.getElementsByClass("search-result-story__body").text().indexOf(" (Source: Bloomberg");
-                        
-                        if ( index == -1) {
-                            keyValue.put("content", item.getElementsByClass("search-result-story__body").text());
-                        } else {
-                            keyValue.put("content", item.getElementsByClass("search-result-story__body").text().substring(0, index));
-                        }
-                        
-                        keyValue.put("date", item.getElementsByClass("published-at").text());
-                        keyValue.put("url", "www.bloomberg.com/" + item.getElementsByClass("search-result-story__thumbnail__link").attr("href"));
-                        
-                        ret.add(keyValue);
+                        results.add(keyValue);
                     }
-
+                    
                 } catch (DOMException e) {
                     e.printStackTrace();
                 }
 
-                return ok(Json.toJson(ret));
+                return ok(Json.toJson(results));
             }
         });
     }

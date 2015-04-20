@@ -24,3 +24,7 @@ GET         /frb                controllers.FRBProxy.index(q)
 GET         /kw                 controllers.KWProxy.index(q)
 
 GET         /nw                 controllers.NWProxy.index(q)
+
+GET         /nyt                controllers.NYTProxy.index(q)
+
+GET         /bi                 controllers.BIProxy.index(q)
