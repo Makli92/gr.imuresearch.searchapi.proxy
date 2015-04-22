@@ -28,3 +28,5 @@ GET         /nw                 controllers.NWProxy.index(q)
 GET         /nyt                controllers.NYTProxy.index(q)
 
 GET         /bi                 controllers.BIProxy.index(q)
+
+GET         /cnbc               controllers.CNBCProxy.index(q)
