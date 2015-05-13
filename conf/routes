@@ -3,17 +3,17 @@
 # ~~~~
 
 # Home page
-GET        /                    controllers.Application.index()
+GET         /                   controllers.Application.index()
 
 # Map static resources from the /public folder to the /assets URL path
 GET        /assets/*file        controllers.Assets.at(path="/public", file)
 
 
-GET        /wsj                 controllers.WJSProxy.index(q)
+GET         /wsj                controllers.WJSProxy.index(q)
 
-GET        /hbr                 controllers.HBRProxy.index(q)
+GET         /hbr                controllers.HBRProxy.index(q)
 
-GET        /ft                 controllers.FTProxy.index(q)
+GET         /ft                 controllers.FTProxy.index(q)
 
 GET        /bp                 controllers.BPProxy.index(q)
 
@@ -21,3 +21,18 @@ GET        /an                 controllers.ANProxy.index(q)
 
 GET        /car                 controllers.CARProxy.index(q)
 
+GET         /cnn                controllers.CNNProxy.index(q)
+
+GET         /bb                 controllers.BBProxy.index(q)
+
+GET         /frb                controllers.FRBProxy.index(q)
+
+GET         /kw                 controllers.KWProxy.index(q)
+
+GET         /nw                 controllers.NWProxy.index(q)
+
+GET         /nyt                controllers.NYTProxy.index(q)
+
+GET         /bi                 controllers.BIProxy.index(q)
+
+GET         /cnbc               controllers.CNBCProxy.index(q)
