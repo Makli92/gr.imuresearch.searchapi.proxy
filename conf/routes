@@ -30,3 +30,7 @@ GET         /nyt                controllers.NYTProxy.index(q)
 GET         /bi                 controllers.BIProxy.index(q)
 
 GET         /cnbc               controllers.CNBCProxy.index(q)
+
+GET         /wdcd               controllers.WDCDProxy.index(q)
+
+GET         /tree               controllers.TREEProxy.index(q)

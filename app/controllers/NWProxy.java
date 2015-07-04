@@ -71,7 +71,6 @@ public class NWProxy extends Controller {
                         
                         // Get date from each article separately
                         org.jsoup.nodes.Document articleDoc = RedirectionHandler(officialUrl + item.select("a").attr("href"));
-                        Elements meta = articleDoc.select("html head meta");
                         
                         keyValue.put("date", articleDoc.select("span.timedate").text());
                         keyValue.put("url", officialUrl + item.select("a").attr("href"));

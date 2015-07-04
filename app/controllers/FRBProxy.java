@@ -46,7 +46,6 @@ public class FRBProxy extends Controller {
             @Override
             public Result apply(WSResponse wsResponse) throws Throwable {
 
-
                 String body = wsResponse.getBody();
 
                 List<Map<String,String>> results  = new ArrayList<Map<String, String>>();
