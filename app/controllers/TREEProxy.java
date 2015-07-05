@@ -48,8 +48,7 @@ public class TREEProxy extends Controller {
             });
         }
         
-        String basicUrl = "https://www.googleapis.com/customsearch/v1element"; 
-        //?key=AIzaSyCVAXiUzRYsML1Pv6RwSG1gunmMikTzQqY&rsz=filtered_cse&num=10&cx=017401606067716418337:btpggki1yw8&q=apple
+        String basicUrl = "https://www.googleapis.com/customsearch/v1element";
         
         // Additional query parameters
         String key = "AIzaSyCVAXiUzRYsML1Pv6RwSG1gunmMikTzQqY";

@@ -34,3 +34,5 @@ GET         /cnbc               controllers.CNBCProxy.index(q)
 GET         /wdcd               controllers.WDCDProxy.index(q)
 
 GET         /tree               controllers.TREEProxy.index(q)
+
+GET         /taxi               controllers.TAXIProxy.index(q)
