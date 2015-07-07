@@ -29,11 +29,11 @@ import org.json.JSONArray;
  * If no license is here then you can do whatever you like!
  * and of course I am not liable
  *
- * Created by kostandin on 04/07/15.
+ * Created by kostandin on 06/07/15.
  *
  */
  
-public class TREEProxy extends Controller {
+public class FASTCOProxy extends Controller {
 
     public static F.Promise<Result> index(String query) {
 
@@ -48,21 +48,15 @@ public class TREEProxy extends Controller {
             });
         }
         
-        String basicUrl = "https://www.googleapis.com/customsearch/v1element";
+        String basicUrl = "http://www.fastcodesign.com/api/v1/search";
         
         // Additional query parameters
-        String key = "AIzaSyCVAXiUzRYsML1Pv6RwSG1gunmMikTzQqY";
-        String rsz = "filtered_cse";
-        final int num = 10;
-        String hl = "el";
-        String cx = "017401606067716418337:btpggki1yw8";
+        String paged = "0";
+        int limit = 10;
         
-        F.Promise<WSResponse> wsResponsePromise = WS.url(basicUrl).setQueryParameter("key", key)
-                                                                    .setQueryParameter("rsz", rsz)
-                                                                    .setQueryParameter("num", Integer.toString(num))
-                                                                    .setQueryParameter("hl", hl)
-                                                                    .setQueryParameter("cx", cx)
-                                                                    .setQueryParameter("q", query).get();
+        F.Promise<WSResponse> wsResponsePromise = WS.url(basicUrl).setQueryParameter("q", query)
+                                                                    .setQueryParameter("paged", paged)
+                                                                    .setQueryParameter("limit", Integer.toString(limit)).get();
                                                                     
         return wsResponsePromise.map(new F.Function<WSResponse, Result>() {
             @Override
@@ -74,21 +68,31 @@ public class TREEProxy extends Controller {
                 try {
                     
                     JSONObject initialBody = new JSONObject(body);
-                    JSONArray resultArray = (JSONArray)initialBody.get("results");
+                    JSONArray resultArray = (JSONArray)initialBody.get("items");
                     
                     for (int i = 0; i < resultArray.length(); i++) {
                         
                         Map<String,String> keyValue = new LinkedHashMap<String, String>();
                         
-                        JSONObject innerObj = new JSONObject(resultArray.get(i).toString());
-                        JSONObject metaTags = (JSONObject)innerObj.get("richSnippet");
-                        JSONObject ogTags = (JSONObject)metaTags.get("metatags");
+                        JSONObject element = (JSONObject)resultArray.get(i);
                         
-                        keyValue.put("image", ogTags.get("ogImage").toString());
-                        keyValue.put("title", ogTags.get("ogTitle").toString());
-                        keyValue.put("content", ogTags.get("ogDescription").toString());
-                        keyValue.put("date", innerObj.get("contentNoFormatting").toString().substring(0, innerObj.get("contentNoFormatting").toString().indexOf("..")));
-                        keyValue.put("url", ogTags.get("ogUrl").toString());
+                        // Get title
+                        keyValue.put("title", element.get("title").toString());
+                        
+                        // Get content
+                        keyValue.put("content", element.get("deck").toString());
+                        
+                        // Get date
+                        element = (JSONObject)resultArray.get(i);
+                        element = (JSONObject)element.get("date");
+                        element = (JSONObject)element.get("updated");
+                        
+                        keyValue.put("date", element.get("long").toString());
+                        
+                        // Get url
+                        element = (JSONObject)resultArray.get(i);
+                        
+                        keyValue.put("url", "www." + element.get("url").toString().substring(2));
                         
                         results.add(keyValue);
                     }

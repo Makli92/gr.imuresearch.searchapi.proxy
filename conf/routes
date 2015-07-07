@@ -36,3 +36,5 @@ GET         /wdcd               controllers.WDCDProxy.index(q)
 GET         /tree               controllers.TREEProxy.index(q)
 
 GET         /taxi               controllers.TAXIProxy.index(q)
+
+GET         /fastco             controllers.FASTCOProxy.index(q)
