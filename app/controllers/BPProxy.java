@@ -11,7 +11,6 @@ import play.libs.ws.WS;
 import play.libs.ws.WSResponse;
 import play.mvc.Controller;
 import play.mvc.Result;
-import play.utils.UriEncoding;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -21,11 +20,10 @@ import java.util.Map;
 /**
  * If no license is here then you can whatever you like!
  * and of course I am not liable
- * <p/>
- * Created by fotis on 04/07/14.
+ *
+ * Created by fotis on 30/06/14.
  */
-public class HBRProxy extends Controller {
-    final static String baseHBR = "http://hbr.org";
+public class BPProxy extends Controller {
 
     public static F.Promise<Result> index(String query) {
 
@@ -40,7 +38,7 @@ public class HBRProxy extends Controller {
             });
         }
 
-        F.Promise<WSResponse> wsResponsePromise = WS.url(baseHBR + "/search?term=" + query).get();
+            F.Promise<WSResponse> wsResponsePromise = WS.url("http://www.brainpickings.org").setQueryParameter("s",query).get();
 
         return wsResponsePromise.map(new F.Function<WSResponse, Result>() {
             @Override
@@ -55,22 +53,16 @@ public class HBRProxy extends Controller {
 
 
                     org.jsoup.nodes.Document parse = Jsoup.parse(body);
-                    Elements itemContent = parse.select(".stream-list.ptn").select("ul").select(".stream-entry");
-
+                    Elements itemContent = parse.select(".post");
                     for (Element next : itemContent) {
                         Map<String,String> keyValue = new LinkedHashMap<String, String>();
-
-                        Elements streamItem = next.select(".stream-item");
-
-                        if(streamItem.isEmpty()){
-                            continue;
-                        }
-
-                        keyValue.put("title",streamItem.attr("data-title"));
-                        keyValue.put("content",streamItem.attr("data-summary"));
-                        keyValue.put("date",streamItem.select(".pubdate").select("time").html());
-                        keyValue.put("url", baseHBR+streamItem.attr("data-url"));
-
+                        Elements a = next.select(".newsImage").select("a");
+                        keyValue.put("image", "");
+                        Elements link = next.select(".holder").select("h2").select("a");
+                        keyValue.put("title", link.html());
+                        keyValue.put("content",next.select(".holder").select("p").html());
+                        keyValue.put("date",next.select(".date").html());
+                        keyValue.put("url", link.attr("href"));
                         ret.add(keyValue);
                     }
 
@@ -87,4 +79,5 @@ public class HBRProxy extends Controller {
 
 
     }
+
 }
