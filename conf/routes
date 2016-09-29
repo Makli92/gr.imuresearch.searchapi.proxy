@@ -9,18 +9,6 @@ GET         /                   controllers.Application.index()
 GET        /assets/*file        controllers.Assets.at(path="/public", file)
 
 
-GET         /wsj                controllers.WJSProxy.index(q)
-
-GET         /hbr                controllers.HBRProxy.index(q)
-
-GET         /ft                 controllers.FTProxy.index(q)
-
-GET        /bp                 controllers.BPProxy.index(q)
-
-GET        /an                 controllers.ANProxy.index(q)
-
-GET        /car                 controllers.CARProxy.index(q)
-
 GET         /cnn                controllers.CNNProxy.index(q)
 
 GET         /bb                 controllers.BBProxy.index(q)
