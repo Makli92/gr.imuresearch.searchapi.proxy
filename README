@@ -1,4 +1,12 @@
-This is your new Play application
+Information Retrieval API
 =================================
 
-This file will be packaged with your application, when using `activator dist`.
+This project consists of a number of proxies, searching for results in a list of widely-known websites, such as CNN, NYT etc. 
+Based on Play Framework (MVC), in Java, the proxies are created as Controllers, returning the first 10 results' data from the specific
+website, regarding the HTTP request, in a map of JSON objects. The data, the map contains for each result, in case of existence, 
+are the following:
+  - Title
+  - Summary
+  - URL
+  - Image (URL)
+  - Date
